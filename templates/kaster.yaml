@@ -1,0 +1,15 @@
+{{/*Runik Platform
+Copyright (C) 2023 namenmalkv@gmail.com
+SPDX-License-Identifier: AGPL-3.0-only
+*/}}
+{{/* esto seria remplazable por $ pero para lectura de codigo */}}
+{{- $root := . }}
+
+{{- if $root.Values.glyphs }}
+  {{- range $chartName, $_ := $root.Subcharts }}
+    {{- range $glyphName, $glyph:= index $root.Values.glyphs $chartName }}
+      {{- $glyphWithName := merge $glyph (dict "name" $glyphName) }}
+      {{- include (printf "%s.%s" $chartName $glyph.type ) (list $root $glyphWithName ) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
