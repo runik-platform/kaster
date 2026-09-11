@@ -1,6 +1,6 @@
 apiVersion: v2
 name: kaster
-version: 1.4.4
+version: 1.4.5
 description: a kaster for the glyphs system.
 home: https://github.com/runik-platform
 sources:
