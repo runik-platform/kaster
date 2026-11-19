@@ -1,6 +1,6 @@
-# CLAUDE.md — kaster
+# AGENTS.md — kaster
 
-Shared concepts live in the [root CLAUDE.md](../../CLAUDE.md) and [docs/vocabulary.md](../../docs/vocabulary.md). This file only covers what is specific to kaster.
+Shared concepts live in the [root AGENTS.md](../../AGENTS.md) and [docs/vocabulary.md](../../docs/vocabulary.md). This file only covers what is specific to kaster.
 
 ## 1. Role
 
@@ -31,7 +31,7 @@ The trinket name (`kaster`) is cosmetic. Only `key: glyphs` is meaningful — li
 
 ## 4. What kaster receives
 
-Librarian passes only the `glyphs:` block plus injected context (`spellbook`, `chapter`, `lexicon`). See [librarian/CLAUDE.md §5.8](../../librarian/CLAUDE.md). `charts/kaster/values.yaml` ships empty defaults; kaster does not merge defaults of its own.
+Librarian passes only the `glyphs:` block plus injected context (`spellbook`, `chapter`, `lexicon`). See [librarian/AGENTS.md §5.8](../../librarian/AGENTS.md). `charts/kaster/values.yaml` ships empty defaults; kaster does not merge defaults of its own.
 
 ## 5. Bundled subcharts
 
@@ -40,7 +40,9 @@ Librarian passes only the `glyphs:` block plus injected context (`spellbook`, `c
 - **Dispatchable (14)**: `argo-events` · `aws` · `certManager` · `crossplane` · `external-secrets` · `freeForm` · `gcp` · `istio` · `keycloak` · `pinniped` · `postgresql` · `s3` · `vault` · `workflow`
 - **Helpers (not dispatched)**: `common` · `runic-system` · `summon`
 
-Edit rule: edit only in the canonical path `charts/glyphs/`; then bump the submodule reference in `charts/kaster/`.
+Edit rule: edit only in the canonical Glyphs repository. After its reviewed PR
+is merged, The Glyphs repository Workflow propagates the exact commit into Kaster automatically. Manual
+submodule bumps are recovery-only.
 
 ## 6. Testing
 
@@ -56,10 +58,24 @@ make test     glyph <name> [file]
 
 ## 7. Related docs
 
-- [Root CLAUDE.md](../../CLAUDE.md) — two dispatchers, source table.
+- [Root AGENTS.md](../../AGENTS.md) — two dispatchers, source table.
 - [docs/vocabulary.md](../../docs/vocabulary.md) — glossary.
-- [librarian/CLAUDE.md](../../librarian/CLAUDE.md) — what reaches kaster.
-- [charts/summon/CLAUDE.md](../summon/CLAUDE.md) — sister dispatcher.
-- [charts/glyphs/CLAUDE.md](../glyphs/CLAUDE.md) — authoring glyphs (to be written).
+- [librarian/AGENTS.md](../../librarian/AGENTS.md) — what reaches kaster.
+- [charts/summon/AGENTS.md](../summon/AGENTS.md) — sister dispatcher.
+- [Runik Glyph authoring guide](https://github.com/runik-platform/runik/blob/upstream/docs/design/creating-glyphs.md) — Glyph development and release contract. Glyphs intentionally has no root `AGENTS.md` because its root is mounted as this chart's `charts/` directory.
 - [docs/design/kaster.md](../../docs/design/kaster.md) — code walkthrough.
 - [docs/usage/glyphs.md](../../docs/usage/glyphs.md) — spell-author guide to the `glyphs:` key.
+
+## Development and publication
+
+Forgejo `runik/kaster` is the source of truth. Develop from `origin/upstream`,
+push a topic branch to Forgejo, and merge a reviewed PR into `upstream`; never
+develop on or push directly to the generated GitHub repo. Every upstream merge
+automatically triggers Runik component synchronization.
+
+For a release, first merge the intended version in `Chart.yaml`, then publish a
+Forgejo Release at the current `upstream` head with the exact tag
+`v<Chart.yaml.version>`. A raw tag push does not publish. The repository publication Workflow creates a clean
+GitHub snapshot with the public Glyphs dependency, and GitHub Actions creates
+the Release plus the self-contained OCI chart at
+`oci://ghcr.io/runik-platform/kaster`.
